@@ -1,0 +1,65 @@
+@font-face {
+  font-family: "TNY";
+  src: url("./assets/font/t.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JW";
+  src: url("./assets/font/jw.woff2") format("woff2");
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #151515;
+  color: #bac4b8;
+  overflow: hidden;
+  font-family: "TNY", sans-serif;
+  // overscroll-behavior-x: none;
+}
+
+#root,
+.app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.JW-font {
+  font-family: "JW", sans-serif;
+}
+
+//font size
+.font-xsss {
+  font-size: 4px;
+}
+
+.font-xss {
+  font-size: 6px;
+}
+
+.font-xs {
+  font-size: 8px;
+}
+
+.font-sm {
+  font-size: 10px;
+}
+
+// canvas layout
+.canvas-container {
+  z-index: 10;
+}
+
+// remove scroll bar of canvas, but still scrollable
+.remove-canvas-scroll-bar > div > div::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+.remove-canvas-scroll-bar > div > div {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overscroll-behavior-x: none;
+}
