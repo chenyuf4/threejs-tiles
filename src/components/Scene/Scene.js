@@ -9,30 +9,23 @@ const Scene = () => {
   const { width } = useThree((state) => state.viewport);
   const itemsLength = width + (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
   return (
-    <ScrollControls
-      horizontal
-      damping={6}
-      pages={itemsLength / width}
-      infinite={false}
-    >
-      <Scroll>
-        {imagesArr.map((url, index) => {
-          const imagePosition = [
-            IMAGE_BLOCK_WIDTH * index + IMAGE_GAP * index,
-            0,
-            0,
-          ];
-          return (
-            <ImagePlane
-              index={index}
-              key={index}
-              url={url}
-              position={imagePosition}
-            />
-          );
-        })}
-      </Scroll>
-    </ScrollControls>
+    <group>
+      {imagesArr.map((url, index) => {
+        const imagePosition = [
+          IMAGE_BLOCK_WIDTH * index + IMAGE_GAP * index,
+          0,
+          0,
+        ];
+        return (
+          <ImagePlane
+            index={index}
+            key={index}
+            url={url}
+            position={imagePosition}
+          />
+        );
+      })}
+    </group>
   );
 };
 

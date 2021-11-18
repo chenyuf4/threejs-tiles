@@ -1,10 +1,16 @@
 import { useTexture } from "@react-three/drei";
 import { Suspense, useState, useRef, useEffect } from "react";
-import { IMAGE_BLOCK_HEIGHT, IMAGE_BLOCK_WIDTH } from "../../utils/utilFormat";
+import {
+  IMAGE_BLOCK_HEIGHT,
+  IMAGE_BLOCK_WIDTH,
+  imagesArr,
+  IMAGE_GAP,
+} from "../../utils/utilFormat";
 import { useScroll, Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { imagesArr } from "../../utils/utilFormat";
+import { lerp } from "../../utils/utilsFn";
+import { useStore } from "../../store/store";
 const damp = THREE.MathUtils.damp;
 const ImagePlane = ({
   index,
@@ -26,6 +32,11 @@ const ImagePlane = ({
   imgTexture.offset.set(0.42, 0);
   const numImages = imagesArr.length;
   const scroll = useScroll();
+  const { scrollSpeed, setScrollSpeed, scrollDirection, setScrollDirection } =
+    useStore();
+  const rigthBoundary = position[0];
+  const leftBoundary =
+    position[0] - (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
   useFrame((state, delta) => {
     if (!imgRef.current) return;
     // const y = scroll.curve(index / numImages - 1.5 / numImages, 4 / numImages);
@@ -52,6 +63,22 @@ const ImagePlane = ({
       color.set(hover ? "white" : "#aaa"),
       hover ? 0.3 : 0.1
     );
+    const [x, y, z] = imgRef.current.position;
+    // console.log(x);
+    let nextPos =
+      x + (scrollDirection === "L" ? -scrollSpeed * 3 : +scrollSpeed * 3);
+    if (nextPos < leftBoundary) {
+      nextPos = leftBoundary;
+    }
+    if (nextPos > rigthBoundary) {
+      nextPos = rigthBoundary;
+    }
+
+    const lerpVal = lerp(x, nextPos, 0.05);
+    // if (index === 0) console.log(x, nextPos, lerp(x, nextPos, 0.05));
+    // if (index === 0) console.log(x);
+    imgRef.current.position.set(lerpVal, y, z);
+    // setScrollSpeed(0);
   });
   return (
     <Image
