@@ -1,25 +1,25 @@
 import ImagePlane from "../ImagePlane/ImagePlane";
 import { Suspense } from "react";
-import { IMAGE_BLOCK_WIDTH, IMAGE_GAP } from "../../utils/utilFormat";
+import {
+  IMAGE_BLOCK_WIDTH,
+  IMAGE_GAP,
+  IMAGE_BLOCK_HEIGHT,
+} from "../../utils/utilFormat";
 import { useThree } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
 import { imagesArr } from "../../utils/utilFormat";
 const Scene = () => {
   const numImages = imagesArr.length;
-  const { width } = useThree((state) => state.viewport);
-  const itemsLength = width + (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
+  const { width, height } = useThree((state) => state.viewport);
+  const itemsLength =
+    height + (numImages - 1) * (IMAGE_BLOCK_HEIGHT + IMAGE_GAP);
   return (
-    <ScrollControls
-      horizontal
-      damping={6}
-      pages={itemsLength / width}
-      infinite={false}
-    >
+    <ScrollControls damping={6} pages={itemsLength / height} infinite={false}>
       <Scroll>
         {imagesArr.map((url, index) => {
           const imagePosition = [
-            IMAGE_BLOCK_WIDTH * index + IMAGE_GAP * index,
             0,
+            -(IMAGE_BLOCK_HEIGHT * index + IMAGE_GAP * index),
             0,
           ];
           return (

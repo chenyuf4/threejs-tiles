@@ -10,8 +10,8 @@ import img9 from "../assets/image/img9.webp";
 import img10 from "../assets/image/img10.webp";
 
 export const IMAGE_GAP = 15;
-export const IMAGE_BLOCK_HEIGHT = 250;
-export const IMAGE_BLOCK_WIDTH = 65;
+export const IMAGE_BLOCK_HEIGHT = 65;
+export const IMAGE_BLOCK_WIDTH = 250;
 export const imagesArr = [
   img1,
   img2,
