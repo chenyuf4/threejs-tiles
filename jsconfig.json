@@ -1,0 +1,18 @@
+{
+  "compileOptions": {
+    "target": "es5",
+    "allowJs": true,
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolateModules": true,
+    "noEmit":true,
+    "jsx": "react-jsx",
+  },
+  "include": [
+    "src"
+  ]
+}
