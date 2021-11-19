@@ -1,6 +1,11 @@
 import ImagePlane from "../ImagePlane/ImagePlane";
 import { Suspense, useState } from "react";
-import { IMAGE_BLOCK_WIDTH, IMAGE_GAP, DAMP_FACTOR, LERP_FACTOR } from "../../utils/utilFormat";
+import {
+  IMAGE_BLOCK_WIDTH,
+  IMAGE_GAP,
+  DAMP_FACTOR,
+  LERP_FACTOR,
+} from "../../utils/utilFormat";
 import { useFrame, useThree } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
 import { imagesArr } from "../../utils/utilFormat";
@@ -8,6 +13,8 @@ import { useStore } from "../../store/store";
 import { lerp } from "../../utils/utilsFn";
 import produce from "immer";
 const Scene = () => {
+  const { scrollSpeed, scrollDirection, setScrollDirection, setScrollSpeed } =
+    useStore();
   const numImages = imagesArr.length;
   const { width } = useThree((state) => state.viewport);
   const itemsLength = width + (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
@@ -21,13 +28,16 @@ const Scene = () => {
     item[0],
   ]);
   const [positions, setPositions] = useState(defaultPositions);
-  const { scrollSpeed, setScrollSpeed, scrollDirection, setScrollDirection } =
-    useStore();
+  // const { scrollSpeed, setScrollSpeed, scrollDirection, setScrollDirection } =
+  //   useStore();
   useFrame((state, delta) => {
     const newPositions = Array.from({ length: numImages }).map((_, index) => {
       const [x, y, z] = positions[index];
       let nextPos =
-        x + (scrollDirection === "L" ? -scrollSpeed * DAMP_FACTOR : +scrollSpeed * DAMP_FACTOR);
+        x +
+        (scrollDirection === "L"
+          ? -scrollSpeed * DAMP_FACTOR
+          : +scrollSpeed * DAMP_FACTOR);
       const [leftBoundary, rigthBoundary] = defaultBoundary[index];
       if (nextPos < leftBoundary) {
         nextPos = leftBoundary;

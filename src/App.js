@@ -11,7 +11,7 @@ const App = () => {
   // right < 0
   // top > 0
   //bottom < 0
-  const { scrollSpeed, setScrollDirection, setScrollSpeed } = useStore();
+  const { setScrollDirection, setScrollSpeed } = useStore();
   const tilesOnWheel = (mouse) => {
     const { pixelX, pixelY } = normalizeWheel(mouse);
     let horizonal = true;

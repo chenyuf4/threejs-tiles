@@ -10,7 +10,6 @@ import { useScroll, Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { lerp } from "../../utils/utilsFn";
-import { useStore } from "../../store/store";
 const damp = THREE.MathUtils.damp;
 const ImagePlane = ({
   index,
@@ -32,8 +31,7 @@ const ImagePlane = ({
   imgTexture.offset.set(0.42, 0);
   const numImages = imagesArr.length;
   const scroll = useScroll();
-  const { scrollSpeed, setScrollSpeed, scrollDirection, setScrollDirection } =
-    useStore();
+
   const rigthBoundary = position[0];
   const leftBoundary =
     position[0] - (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
