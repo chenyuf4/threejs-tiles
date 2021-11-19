@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import "./App.scss";
@@ -9,16 +9,32 @@ import { useStore } from "./store/store";
 const App = () => {
   // left > 0
   // right < 0
-  const { setScrollDirection, setScrollSpeed } = useStore();
+  // top > 0
+  //bottom < 0
+  const { scrollSpeed, setScrollDirection, setScrollSpeed } = useStore();
   const tilesOnWheel = (mouse) => {
     const { pixelX, pixelY } = normalizeWheel(mouse);
-    if (pixelX < 0) {
-      setScrollDirection("R");
-    } else {
-      setScrollDirection("L");
+    let horizonal = true;
+    if (Math.abs(pixelY) > Math.abs(pixelX)) {
+      horizonal = false;
     }
-    setScrollSpeed(Math.abs(pixelX));
+    if (horizonal) {
+      if (pixelX < 0) {
+        setScrollDirection("R");
+      } else {
+        setScrollDirection("L");
+      }
+    } else {
+      if (pixelY < 0) {
+        setScrollDirection("R");
+      } else {
+        setScrollDirection("L");
+      }
+    }
+    const speedVal = Math.max(Math.abs(pixelX), Math.abs(pixelY));
+    setScrollSpeed(speedVal);
   };
+  const refContainer = useRef();
   return (
     <>
       <div
@@ -39,7 +55,6 @@ const App = () => {
           </Canvas>
         </Suspense>
       </div>
-
       <Home />
     </>
   );
