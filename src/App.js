@@ -45,7 +45,6 @@ const App = () => {
           <Canvas
             linear
             orthographic
-            colorManagement
             dpr={[1, 1.5]}
             gl={{
               antialias: true,

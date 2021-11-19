@@ -1,18 +1,17 @@
 {
-  "compileOptions": {
-    "target": "es5",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
     "allowJs": true,
+    "checkJs": true,
     "strict": true,
-    "module": "esnext",
     "moduleResolution": "node",
     "baseUrl": "src",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "isolateModules": true,
-    "noEmit":true,
-    "jsx": "react-jsx",
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
