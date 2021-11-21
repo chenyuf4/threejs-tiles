@@ -61,20 +61,6 @@ const ImagePlane = ({
       color.set(hover ? "white" : "#aaa"),
       hover ? 0.3 : 0.1
     );
-    // const [x, y, z] = imgRef.current.position;
-    // // console.log(x);
-    // let nextPos =
-    //   x + (scrollDirection === "L" ? -scrollSpeed * 8 : +scrollSpeed * 8);
-    // if (nextPos < leftBoundary) {
-    //   nextPos = leftBoundary;
-    // }
-    // if (nextPos > rigthBoundary) {
-    //   nextPos = rigthBoundary;
-    // }
-
-    // const lerpVal = lerp(x, nextPos, 0.05);
-    // imgRef.current.position.set(lerpVal, y, z);
-    // setScrollSpeed(0);
   });
   return (
     <Image

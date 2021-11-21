@@ -31,7 +31,7 @@ const App = () => {
         setScrollDirection("L");
       }
     }
-    const speedVal = Math.max(Math.abs(pixelX), Math.abs(pixelY));
+    const speedVal = Math.max(Math.abs(pixelX), Math.abs(pixelY), 1);
     setScrollSpeed(speedVal);
   };
   const refContainer = useRef();
