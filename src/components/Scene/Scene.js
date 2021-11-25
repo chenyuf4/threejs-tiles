@@ -1,6 +1,7 @@
 import ImagePlane from "../ImagePlane/ImagePlane";
 import { Suspense, useEffect, useRef, useState } from "react";
 import React from "react";
+import useRefMounted from "utils/useRefMounted";
 import {
   IMAGE_BLOCK_WIDTH,
   IMAGE_GAP,
@@ -15,9 +16,8 @@ import produce from "immer";
 import { getCameraViewSize } from "utils/utilsFn";
 import normalizeWheel from "normalize-wheel";
 const { lerp, damp } = THREE.MathUtils;
-const Scene = () => {
-  const speedRef = useRef(0);
-  const directionRef = useRef("L");
+const Scene = ({ scroll }) => {
+  const mounted = useRefMounted();
   const camera = useThree((state) => state.camera);
   const imgGroupRef = useRef();
   const numImages = imagesArr.length;
@@ -31,7 +31,7 @@ const Scene = () => {
   ]);
   const slidingLength = numImages * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
 
-  const leftScrollBoundary = -(4 * IMAGE_BLOCK_WIDTH + 3 * IMAGE_GAP);
+  const leftScrollBoundary = -(3 * IMAGE_BLOCK_WIDTH + 2 * IMAGE_GAP);
   const rightScrollBoundary = -leftScrollBoundary;
   const defaultPositions = Array.from({ length: numImages }).map((_, index) => [
     imgPositionCorrection(IMAGE_BLOCK_WIDTH * index + IMAGE_GAP * index),
@@ -41,6 +41,7 @@ const Scene = () => {
   function imgPositionCorrection(curPosX) {
     let leftImgBoundary = curPosX - IMAGE_BLOCK_WIDTH / 2;
     let rightImgBoundary = curPosX + IMAGE_BLOCK_WIDTH / 2;
+    const [direction, speedVal] = parseOnWheel();
     if (
       (leftImgBoundary - slidingLength >= leftScreenBoundary &&
         leftImgBoundary - slidingLength <= rightScreenBoundary) ||
@@ -56,85 +57,74 @@ const Scene = () => {
     ) {
       curPosX += slidingLength;
     }
-    if (
-      directionRef.current === "L" &&
-      rightImgBoundary <= leftScreenBoundary
-    ) {
+    if (direction === "L" && rightImgBoundary <= leftScreenBoundary) {
       curPosX += slidingLength;
     }
-    if (
-      directionRef.current === "R" &&
-      leftImgBoundary >= rightScreenBoundary
-    ) {
+    if (direction === "R" && leftImgBoundary >= rightScreenBoundary) {
       curPosX -= slidingLength;
     }
     return curPosX;
   }
   useFrame((state, delta) => {
     //positions
-    if (!imgGroupRef.current) return;
+    if (!mounted) return;
     const imgsRefArr = imgGroupRef.current.children;
-
+    const [direction, speedVal] = parseOnWheel();
+    const normalizeSpeed = speedVal / 100;
     const newPositions = Array.from({ length: numImages }).forEach(
       (_, index) => {
         let [x, y, z] = imgsRefArr[index].position;
+        //update x
         x = imgPositionCorrection(x);
         let nextPosX =
-          x +
-          (directionRef.current === "L"
-            ? -speedRef.current * 0.05
-            : +speedRef.current * 0.05);
+          x + (direction === "L" ? -speedVal * 0.05 : +speedVal * 0.05);
 
-        nextPosX = lerp(x, nextPosX, 0.045);
+        nextPosX = damp(x, nextPosX, 3, delta);
         imgsRefArr[index].position.x = nextPosX;
+
+        const nextPosZ = calculateNewPosZ(nextPosX, normalizeSpeed) * 6;
+        imgsRefArr[index].position.z = lerp(z, nextPosZ, 0.05);
       }
     );
-
-    //   //   //rotation
-    //   //   //right, rotation > 0
-    //   //   //left, rotation < 0
-    //   //   // const rotationRatio = scrollSpeed > 0 ? (Math.PI / 4) * normalizeSpeed : 0;
-    //   //   // const rotationVal = damp(
-    //   //   //   rotation[1],
-    //   //   //   scrollDirection === "R" ? rotationRatio : -rotationRatio,
-    //   //   //   20,
-    //   //   //   delta
-    //   //   // );
-    speedRef.current = 0;
+    scroll.current = null;
   });
+  //ax^2 + c
+  //c = speedval
+  //ax^2 + c = 0
+  //a = -c / x ^ 2
+  //
+  function calculateNewPosZ(x, speed) {
+    if (x <= leftScrollBoundary || x >= rightScrollBoundary) return 0;
+    const c = speed;
+    const a = -c / Math.abs(rightScrollBoundary ** 2);
+    return a * x ** 2 + c;
+  }
 
-  const handleOnWheel = (e) => {
-    const { pixelX, pixelY } = normalizeWheel(e);
+  function parseOnWheel() {
+    let direction = "L";
+    let speedVal = 0;
+    if (!scroll.current) return [direction, speedVal];
+    const { pixelX, pixelY } = normalizeWheel(scroll.current);
     let horizonal = true;
     if (Math.abs(pixelY) > Math.abs(pixelX)) {
       horizonal = false;
     }
     if (horizonal) {
       if (pixelX < 0) {
-        directionRef.current = "R";
+        direction = "R";
       } else {
-        directionRef.current = "L";
+        direction = "L";
       }
     } else {
       if (pixelY < 0) {
-        directionRef.current = "R";
+        direction = "R";
       } else {
-        directionRef.current = "L";
+        direction = "L";
       }
     }
-    const speedVal = Math.min(
-      Math.max(Math.abs(pixelX), Math.abs(pixelY)),
-      100
-    );
-    speedRef.current = speedVal;
-  };
-  useEffect(() => {
-    document.body.addEventListener("wheel", handleOnWheel);
-
-    return function cleanup() {
-      document.body.removeEventListener("wheel", handleOnWheel);
-    };
-  }, []);
+    speedVal = Math.min(Math.max(Math.abs(pixelX), Math.abs(pixelY)), 100);
+    return [direction, speedVal];
+  }
   return (
     <group ref={imgGroupRef}>
       {imagesArr.map((url, index) => {

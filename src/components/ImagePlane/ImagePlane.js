@@ -21,7 +21,6 @@ const ImagePlane = ({
   url,
   ...props
 }) => {
-  console.log("rerender");
   const imgRef = useRef();
   const [hover, setHover] = useState(false);
   const [click, setClick] = useState(false);
@@ -33,9 +32,6 @@ const ImagePlane = ({
     1
   );
   imgTexture.offset.set(0.42, 0);
-  const normalizeSpeed = scrollSpeed / 100;
-  const leftScrollBoundary = -(4 * IMAGE_BLOCK_WIDTH + 3 * IMAGE_GAP);
-  const rightScrollBoundary = -leftScrollBoundary;
 
   useEffect(() => {
     if (imgRef.current) {
@@ -44,17 +40,17 @@ const ImagePlane = ({
   });
   // useFrame((state, delta) => {
   //   if (!imgRef.current) return;
-  //   //   // image hover effect
-  //   imgRef.current.material.grayscale = damp(
-  //     imgRef.current.material.grayscale,
-  //     hover ? 0 : 1,
-  //     6,
-  //     delta
-  //   );
-  //   imgRef.current.material.color.lerp(
-  //     color.set(hover ? "white" : "#aaa"),
-  //     hover ? 0.3 : 0.1
-  //   );
+  //   // image hover effect
+  // imgRef.current.material.grayscale = damp(
+  //   imgRef.current.material.grayscale,
+  //   hover ? 0 : 1,
+  //   6,
+  //   delta
+  // );
+  // imgRef.current.material.color.lerp(
+  //   color.set(hover ? "white" : "#aaa"),
+  //   hover ? 0.3 : 0.1
+  // );
   // });
 
   return (

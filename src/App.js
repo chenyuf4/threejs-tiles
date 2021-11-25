@@ -13,9 +13,14 @@ const App = () => {
   // right < 0
   // top > 0
   //bottom < 0
+  const scrollRef = useRef(null);
+  const handleOnWheel = (e) => (scrollRef.current = e);
   return (
     <>
-      <div className="w-100 h-100 position-relative canvas-container remove-canvas-scroll-bar">
+      <div
+        className="w-100 h-100 position-relative canvas-container remove-canvas-scroll-bar"
+        onWheel={handleOnWheel}
+      >
         <Suspense fallback={null}>
           <Canvas
             linear
@@ -30,7 +35,7 @@ const App = () => {
               fov={50}
               position={[0, 0, DISTANCE_TO_PLANE]}
             />
-            <Scene />
+            <Scene scroll={scrollRef} />
           </Canvas>
         </Suspense>
       </div>
