@@ -5,42 +5,17 @@ import "./App.scss";
 import Scene from "./components/Scene/Scene";
 import Home from "./components/Home/Home";
 import normalizeWheel from "normalize-wheel";
-import { useStore } from "./store/store";
+import { PerspectiveCamera } from "@react-three/drei";
+import { DISTANCE_TO_PLANE } from "utils/utilFormat";
+
 const App = () => {
   // left > 0
   // right < 0
   // top > 0
   //bottom < 0
-  const { setScrollDirection, setScrollSpeed } = useStore();
-  const tilesOnWheel = (mouse) => {
-    const { pixelX, pixelY } = normalizeWheel(mouse);
-    let horizonal = true;
-    if (Math.abs(pixelY) > Math.abs(pixelX)) {
-      horizonal = false;
-    }
-    if (horizonal) {
-      if (pixelX < 0) {
-        setScrollDirection("R");
-      } else {
-        setScrollDirection("L");
-      }
-    } else {
-      if (pixelY < 0) {
-        setScrollDirection("R");
-      } else {
-        setScrollDirection("L");
-      }
-    }
-    const speedVal = Math.max(Math.abs(pixelX), Math.abs(pixelY), 1);
-    setScrollSpeed(speedVal);
-  };
-  const refContainer = useRef();
   return (
     <>
-      <div
-        className="w-100 h-100 position-relative canvas-container remove-canvas-scroll-bar"
-        onWheel={tilesOnWheel}
-      >
+      <div className="w-100 h-100 position-relative canvas-container remove-canvas-scroll-bar">
         <Suspense fallback={null}>
           <Canvas
             linear
@@ -50,6 +25,11 @@ const App = () => {
               antialias: true,
             }}
           >
+            <PerspectiveCamera
+              makeDefault
+              fov={50}
+              position={[0, 0, DISTANCE_TO_PLANE]}
+            />
             <Scene />
           </Canvas>
         </Suspense>
