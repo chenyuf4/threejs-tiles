@@ -9,9 +9,7 @@ import { Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useStore } from "store/store";
 import * as THREE from "three";
-import { animated } from "@react-spring/three";
 const { lerp, damp } = THREE.MathUtils;
-const AnimatedImage = animated(Image);
 const ImagePlane = ({
   index,
   position = [0, 0, 0],
@@ -36,8 +34,26 @@ const ImagePlane = ({
   useEffect(() => {
     if (imgRef.current) {
       imgRef.current.material.grayscale = 1;
+      imgRef.current.material.side = THREE.DoubleSide;
     }
   });
+  const leftScrollBoundary = -(4 * IMAGE_BLOCK_WIDTH + 3 * IMAGE_GAP);
+  const rightScrollBoundary = -leftScrollBoundary;
+  function calculateNewPosZ(x, speed) {
+    if (x <= leftScrollBoundary || x >= rightScrollBoundary) return 0;
+    const c = speed;
+    const a = -c / Math.abs(rightScrollBoundary ** 2);
+    return a * x ** 2 + c;
+  }
+  // useFrame((state, delta) => {
+  //   if (!imgRef.current) return;
+  //   const [x, y, z] = imgRef.current.position;
+  //   const nextPosZ = calculateNewPosZ(x, 2.2);
+  //   imgRef.current.position.z = damp(z, nextPosZ, 10, delta);
+
+  //   // const degree =
+  // });
+  // //ax^2 + c, deriative = 2ax
   // useFrame((state, delta) => {
   //   if (!imgRef.current) return;
   //   // image hover effect
@@ -54,7 +70,7 @@ const ImagePlane = ({
   // });
 
   return (
-    <AnimatedImage
+    <Image
       ref={imgRef}
       url={url}
       position={position}
