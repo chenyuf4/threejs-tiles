@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import "./App.scss";
 import Scene from "./components/Scene/Scene";
 import Home from "./components/Home/Home";
+import { PerspectiveCamera } from "@react-three/drei";
 const App = () => {
   return (
     <>
@@ -11,13 +12,12 @@ const App = () => {
         <Suspense fallback={null}>
           <Canvas
             linear
-            orthographic
-            colorManagement
             dpr={[1, 1.5]}
             gl={{
               antialias: true,
             }}
           >
+            <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={50} />
             <Scene />
           </Canvas>
         </Suspense>

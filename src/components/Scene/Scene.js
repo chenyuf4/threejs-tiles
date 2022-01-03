@@ -1,9 +1,10 @@
 import ImagePlane from "../ImagePlane/ImagePlane";
 import { Suspense } from "react";
-import { IMAGE_BLOCK_WIDTH, IMAGE_GAP } from "../../utils/utilFormat";
+import { IMAGE_BLOCK_WIDTH, IMAGE_GAP } from "utils/utilFormat";
 import { useThree } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
-import { imagesArr } from "../../utils/utilFormat";
+import { imagesArr } from "utils/utilFormat";
+import Minimap from "components/Minimap/Minimap";
 const Scene = () => {
   const numImages = imagesArr.length;
   const { width } = useThree((state) => state.viewport);
@@ -11,10 +12,11 @@ const Scene = () => {
   return (
     <ScrollControls
       horizontal
-      damping={6}
+      damping={5}
       pages={itemsLength / width}
       infinite={false}
     >
+      <Minimap />
       <Scroll>
         {imagesArr.map((url, index) => {
           const imagePosition = [
