@@ -5,9 +5,16 @@ import { useThree } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
 import { imagesArr } from "utils/utilFormat";
 import Minimap from "components/Minimap/Minimap";
+import { useStore } from "store/store";
 const Scene = () => {
   const numImages = imagesArr.length;
   const { width } = useThree((state) => state.viewport);
+  const { clicked } = useStore();
+  const newImageWidth = 1.388 * 4.5;
+  // const itemsLength =
+  //   clicked === -1
+  //     ? width + (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP)
+  //     : width + (numImages - 1) * (newImageWidth + 1.3);
   const itemsLength = width + (numImages - 1) * (IMAGE_BLOCK_WIDTH + IMAGE_GAP);
   return (
     <ScrollControls
@@ -27,7 +34,7 @@ const Scene = () => {
           return (
             <ImagePlane
               index={index}
-              key={index}
+              key={url + index}
               url={url}
               position={imagePosition}
             />
