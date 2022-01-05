@@ -8,7 +8,7 @@ import { PerspectiveCamera } from "@react-three/drei";
 import { useStore } from "store/store";
 import normalizeWheel from "normalize-wheel";
 const App = () => {
-  const { clicked, setClicked, scrollable, setScrollable } = useStore();
+  const { clicked, setClicked, setScrollable } = useStore();
   const onWheelFn = (e) => {
     const { pixelX, pixelY } = normalizeWheel(e);
     if (Math.abs(pixelX) > 15 || Math.abs(pixelY) > 15) {

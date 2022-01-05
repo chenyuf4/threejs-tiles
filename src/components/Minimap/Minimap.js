@@ -47,7 +47,6 @@ const MinimapLine = ({ index, position }) => {
   );
 };
 const Minimap = () => {
-  const numImages = imagesArr.length;
   const { height } = useThree((state) => state.viewport);
 
   return (

@@ -1,10 +1,5 @@
-import { useTexture } from "@react-three/drei";
-import { Suspense, useState, useRef, useEffect } from "react";
-import {
-  IMAGE_BLOCK_HEIGHT,
-  IMAGE_BLOCK_WIDTH,
-  IMAGE_GAP,
-} from "utils/utilFormat";
+import { useState, useRef } from "react";
+import { IMAGE_BLOCK_HEIGHT, IMAGE_BLOCK_WIDTH } from "utils/utilFormat";
 import { useScroll, Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -13,7 +8,7 @@ import { useStore } from "store/store";
 import gsap from "gsap";
 import { Power2 } from "gsap";
 import useRefMounted from "hooks/useRefMounted";
-const { damp, lerp } = THREE.MathUtils;
+const { damp } = THREE.MathUtils;
 const { easeOut } = Power2;
 const ImagePlane = ({
   index,
@@ -26,12 +21,9 @@ const ImagePlane = ({
   const imgRef = useRef();
   const prevPosition = useRef(0);
   const [hover, setHover] = useState(false);
-  const [click, setClick] = useState(false);
-  const [imgTexture] = useTexture([url]);
   const { clicked, setClicked, scrollable, setScrollable } = useStore();
   const numImages = imagesArr.length;
   const scroll = useScroll();
-  const WHOLE_WIDTH = 9 * IMAGE_BLOCK_WIDTH + 8 * IMAGE_GAP;
   const mounted = useRefMounted();
 
   const onClickFn = () => {
@@ -47,7 +39,7 @@ const ImagePlane = ({
   };
 
   const variance = 0.5;
-  const c = 7;
+  const c = 6.5;
   // get rotation angle
   const deriativeFn = (x, speed) => {
     return (
@@ -110,7 +102,7 @@ const ImagePlane = ({
           imgRef.current.position.z,
           (c * speed * (Math.exp(-(x ** 2) / (2 * variance ** 2)) - 0.1)) /
             (variance * Math.sqrt(2 * Math.PI)),
-          8,
+          Math.max(8, 13 * speed),
           delta
         );
       } else {
@@ -213,6 +205,14 @@ const ImagePlane = ({
           7,
           delta
         );
+      } else {
+        imgRef.current.material.grayscale = damp(
+          imgRef.current.material.grayscale,
+          0,
+          3,
+          delta
+        );
+        imgRef.current.material.color.lerp(color.set("white"), 0.035);
       }
       imgRef.current.rotation.y = damp(imgRef.current.rotation.y, 0, 7, delta);
       if (Math.abs(clicked - index) <= 1) {
