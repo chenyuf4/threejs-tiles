@@ -205,7 +205,20 @@ const ImagePlane = ({
           7,
           delta
         );
+        imgRef.current.material.grayscale = damp(
+          imgRef.current.material.grayscale,
+          1,
+          3,
+          delta
+        );
+        imgRef.current.material.color.lerp(color.set("#808080"), 0.035);
       } else {
+        imgRef.current.position.x = damp(
+          imgRef.current.position.x,
+          position[0],
+          7,
+          delta
+        );
         imgRef.current.material.grayscale = damp(
           imgRef.current.material.grayscale,
           0,
