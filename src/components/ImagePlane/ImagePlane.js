@@ -46,12 +46,13 @@ const ImagePlane = ({
     }
   };
 
+  const variance = 0.5;
+  const c = 7;
   // get rotation angle
   const deriativeFn = (x, speed) => {
     return (
-      (speed *
-        (-1.25 * Math.sin((2 * Math.PI * x) / WHOLE_WIDTH) * 2 * Math.PI)) /
-      WHOLE_WIDTH
+      (c * speed * (-x * Math.exp(-(x ** 2) / (2 * variance ** 2)))) /
+      (variance * Math.sqrt(2 * Math.PI))
     );
   };
 
@@ -69,16 +70,16 @@ const ImagePlane = ({
       Math.abs((curPosition - prevPosition.current) / delta) * 1.5,
       1.25
     );
-    const scrollLeft = curPosition < prevPosition.current;
+    const scrollRight = curPosition < prevPosition.current;
     prevPosition.current = curPosition;
 
     // calculate useful data
-    const y = scroll.curve(index / numImages - 4.5 / numImages, 9 / numImages);
+    const y = scroll.curve(index / numImages - 5.5 / numImages, 11 / numImages);
     const percentage = scroll.range(
-      index / numImages - 4.5 / numImages,
-      9 / numImages
+      index / numImages - 5.5 / numImages,
+      11 / numImages
     );
-    const x = (WHOLE_WIDTH / 2) * (1 - y);
+    const x = (percentage - 0.5) * 2;
     const degree = Math.atan(deriativeFn(x, speed));
 
     if (clicked === -1) {
@@ -104,50 +105,47 @@ const ImagePlane = ({
 
       //create wave effect
       // update position
-      imgRef.current.position.z = damp(
-        imgRef.current.position.z,
-        2.25 * speed * (Math.cos((2 * Math.PI * x) / WHOLE_WIDTH) + 1),
-        8,
-        delta
-      );
-
-      // if (y > 0) {
-      //   imgRef.current.material.scale.x = imgRef.current.scale.x = damp(
-      //     imgRef.current.scale.x,
-      //     IMAGE_BLOCK_WIDTH * (1 + y / 2),
-      //     8,
-      //     delta
-      //   );
-      //   imgRef.current.material.scale.y = imgRef.current.scale.y = damp(
-      //     imgRef.current.scale.y,
-      //     IMAGE_BLOCK_HEIGHT * (1 + y / 2),
-      //     8,
-      //     delta
-      //   );
-      // }
+      if (percentage > 0 && percentage < 1) {
+        imgRef.current.position.z = damp(
+          imgRef.current.position.z,
+          (c * speed * (Math.exp(-(x ** 2) / (2 * variance ** 2)) - 0.1)) /
+            (variance * Math.sqrt(2 * Math.PI)),
+          8,
+          delta
+        );
+      } else {
+        imgRef.current.position.z = damp(
+          imgRef.current.position.z,
+          0,
+          8,
+          delta
+        );
+      }
 
       // update rotation
-      const rotateAdjust = (Math.PI / 10) * speed;
+      const rotateAdjustLarge = (Math.PI / 8) * speed;
+      const rotateAdjustSmall = (Math.PI / 20) * speed;
+      // (Math.PI / 10) * speed;
       if (speed >= 0.2) {
         hover && setHover(false);
         if (percentage > 0 && percentage < 0.5) {
           imgRef.current.rotation.y = damp(
             imgRef.current.rotation.y,
-            -degree + (scrollLeft ? rotateAdjust : -rotateAdjust),
+            degree + (scrollRight ? -rotateAdjustSmall : -rotateAdjustLarge),
             20,
             delta
           );
         } else if (percentage >= 0.5 && percentage < 1) {
           imgRef.current.rotation.y = damp(
             imgRef.current.rotation.y,
-            degree + (scrollLeft ? rotateAdjust : -rotateAdjust),
+            degree + (scrollRight ? rotateAdjustLarge : rotateAdjustSmall),
             20,
             delta
           );
         } else {
           imgRef.current.rotation.y = damp(
             imgRef.current.rotation.y,
-            scrollLeft ? (Math.PI / 5) * speed : (-Math.PI / 5) * speed,
+            scrollRight ? (Math.PI / 5) * speed : (-Math.PI / 5) * speed,
             20,
             delta
           );

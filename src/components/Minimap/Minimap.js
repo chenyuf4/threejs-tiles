@@ -3,6 +3,7 @@ import { useScroll } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { imagesArr } from "utils/utilFormat";
+import useRefMounted from "hooks/useRefMounted";
 
 const material = new THREE.LineBasicMaterial({ color: "#414141" });
 const geometry = new THREE.BufferGeometry().setFromPoints([
@@ -12,12 +13,14 @@ const geometry = new THREE.BufferGeometry().setFromPoints([
 const { damp } = THREE.MathUtils;
 
 const MinimapLine = ({ index, position }) => {
+  const mounted = useRefMounted();
   const numImages = imagesArr.length;
   const scroll = useScroll();
   const prevPosition = useRef(0);
   const lineRef = useRef();
   const WHOLE_WIDTH = 9 * 0.09;
   useFrame((state, delta) => {
+    if (!mounted.current) return;
     const curPosition = scroll.offset;
     const speed = Math.min(
       Math.abs((curPosition - prevPosition.current) / delta) * 1.5,

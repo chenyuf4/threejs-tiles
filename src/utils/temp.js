@@ -2109,6 +2109,7 @@ let RoId = 0;
       t.needGL = h || a || i || s || o || e || r || this.needOver;
     }
     loop() {
+      //mark
       if (this.isHA) {
         const o = _A;
         var i = o.mode,
@@ -2241,7 +2242,7 @@ let RoId = 0;
     }
     l(t) {
       var i = document;
-      R.L(i, t, "mousedown", this.down),
+      R.L(i, t, "mousedown", this.down), //mark
         R.L(i, t, "mouseup", this.up),
         R.L(i, t, "mouseleave", this.leave),
         R.L("#n0", t, "click", this.modeOut),
