@@ -2,7 +2,7 @@ import ImagePlane from "../ImagePlane/ImagePlane";
 import { IMAGE_BLOCK_WIDTH, IMAGE_GAP } from "utils/utilFormat";
 import { useThree } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
-import { imagesArr } from "utils/utilFormat";
+import { imagesArr, backgroundColors, colors } from "utils/utilFormat";
 import Minimap from "components/Minimap/Minimap";
 const Scene = () => {
   const numImages = imagesArr.length;
@@ -29,6 +29,8 @@ const Scene = () => {
               key={url + index}
               url={url}
               position={imagePosition}
+              backgroundColor={backgroundColors[index]}
+              fontColor={colors[index]}
             />
           );
         })}

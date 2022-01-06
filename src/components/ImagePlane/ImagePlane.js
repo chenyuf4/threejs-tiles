@@ -15,7 +15,9 @@ const ImagePlane = ({
   position = [0, 0, 0],
   scale = [IMAGE_BLOCK_WIDTH, IMAGE_BLOCK_HEIGHT, 1],
   color = new THREE.Color(),
+  fontColor,
   url,
+  backgroundColor,
   ...props
 }) => {
   const imgRef = useRef();
@@ -29,6 +31,13 @@ const ImagePlane = ({
   const onClickFn = () => {
     if (mounted.current) {
       setClicked(index);
+      document.body.style.backgroundColor = backgroundColor;
+      const fontElements = document
+        .querySelectorAll(".font-animate")
+        .forEach((item) => {
+          item.style.color = fontColor;
+        });
+
       gsap.to(scroll, {
         offset: (index + 0.5) / numImages,
         duration: 0.7,

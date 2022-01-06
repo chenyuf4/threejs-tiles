@@ -15,6 +15,10 @@ const App = () => {
       if (clicked !== -1) {
         setClicked(-1);
         setScrollable(true);
+        document.body.style.backgroundColor = "#151515";
+        document.querySelectorAll(".font-animate").forEach((item) => {
+          item.style.color = "#bac4b8";
+        });
       }
     }
   };

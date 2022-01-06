@@ -11,7 +11,8 @@ const Home = () => {
         "p-5",
         "d-flex",
         "flex-column",
-        "justify-content-between"
+        "justify-content-between",
+        "font-animate"
       )}
     >
       <div className="d-flex justify-content-between align-items-center">

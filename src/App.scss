@@ -12,10 +12,10 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #151515;
-  color: #bac4b8;
+  background-color: #151515;
   overflow: hidden;
   font-family: "TNY", sans-serif;
+  transition: 0.5s;
   // overscroll-behavior-x: none;
 }
 
@@ -62,4 +62,9 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
   overscroll-behavior-x: none;
+}
+
+.font-animate {
+  transition: 0.5s;
+  color: #bac4b8;
 }
