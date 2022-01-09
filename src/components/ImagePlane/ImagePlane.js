@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { IMAGE_BLOCK_HEIGHT, IMAGE_BLOCK_WIDTH } from "utils/utilFormat";
-import { useScroll, Image, Text } from "@react-three/drei";
+import { useScroll, Image, Text, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { imagesArr } from "utils/utilFormat";
@@ -9,6 +9,7 @@ import gsap from "gsap";
 import { Power2 } from "gsap";
 import useRefMounted from "hooks/useRefMounted";
 import fontFamily from "assets/font/Regular.otf";
+import "../CustomMaterial/CustomMaterial";
 const { damp } = THREE.MathUtils;
 const { easeOut } = Power2;
 const ImagePlane = ({
@@ -28,8 +29,15 @@ const ImagePlane = ({
   const numImages = imagesArr.length;
   const scroll = useScroll();
   const mounted = useRefMounted();
+  const [imgTexture] = useTexture([url]);
+  // imgTexture.repeat.set(
+  //   (IMAGE_BLOCK_WIDTH * imgTexture.image.height) /
+  //     (IMAGE_BLOCK_HEIGHT * imgTexture.image.width),
+  //   1
+  // );
+  // imgTexture.offset.set(0.42, 0);
 
-  const textRefUpper = useRef();
+  const materialRef = useRef();
 
   const onClickFn = () => {
     if (mounted.current) {
@@ -65,9 +73,17 @@ const ImagePlane = ({
     return (1 - speed) * Math.cos(((y * Math.PI) / 2) * speed);
   };
 
+  // useLayoutEffect(() => {
+  //   if (!mounted.current) return;
+  //   if (!materialRef.current) return;
+  //   // materialRef.cu,rrent.uniforms.tDiffuse.value = imgTexture;
+  // }, [mounted, materialRef]);
+
   useFrame((state, delta) => {
     if (!imgRef.current) return;
+    if (!materialRef.current) return;
     if (!mounted.current) return;
+    // materialRef.current.uniforms.tDiffuse.value = imgTexture;
     //update position
     const curPosition = scroll.offset;
     const speed = Math.min(
@@ -86,212 +102,109 @@ const ImagePlane = ({
     const x = (percentage - 0.5) * 2;
     const degree = Math.atan(deriativeFn(x, speed));
 
-    if (clicked === -1) {
-      // if image is not clicked, first recover from clicked position if necessary
-      imgRef.current.position.x = damp(
-        imgRef.current.position.x,
-        position[0],
-        8,
-        delta
-      );
-      imgRef.current.material.scale.x = imgRef.current.scale.x = damp(
-        imgRef.current.scale.x,
-        IMAGE_BLOCK_WIDTH,
-        8,
-        delta
-      );
-      imgRef.current.material.scale.y = imgRef.current.scale.y = damp(
-        imgRef.current.scale.y,
-        IMAGE_BLOCK_HEIGHT,
-        8,
-        delta
-      );
+    //create wave effect
+    // update position
+    // if (percentage > 0 && percentage < 1) {
+    //   imgRef.current.position.z = damp(
+    //     imgRef.current.position.z,
+    //     (c * speed * (Math.exp(-(x ** 2) / (2 * variance ** 2)) - 0.1)) /
+    //       (variance * Math.sqrt(2 * Math.PI)),
+    //     Math.max(8, 13 * speed),
+    //     delta
+    //   );
+    // } else {
+    //   imgRef.current.position.z = damp(imgRef.current.position.z, 0, 8, delta);
+    // }
 
-      //create wave effect
-      // update position
-      if (percentage > 0 && percentage < 1) {
-        imgRef.current.position.z = damp(
-          imgRef.current.position.z,
-          (c * speed * (Math.exp(-(x ** 2) / (2 * variance ** 2)) - 0.1)) /
-            (variance * Math.sqrt(2 * Math.PI)),
-          Math.max(8, 13 * speed),
-          delta
-        );
-      } else {
-        imgRef.current.position.z = damp(
-          imgRef.current.position.z,
-          0,
-          8,
-          delta
-        );
-      }
+    // // update rotation
+    // const rotateAdjustLarge = (Math.PI / 8) * speed;
+    // const rotateAdjustSmall = (Math.PI / 20) * speed;
+    // // (Math.PI / 10) * speed;
+    // if (speed >= 0.2) {
+    //   hover && setHover(false);
+    //   if (percentage > 0 && percentage < 0.5) {
+    //     imgRef.current.rotation.y = damp(
+    //       imgRef.current.rotation.y,
+    //       degree + (scrollRight ? -rotateAdjustSmall : -rotateAdjustLarge),
+    //       20,
+    //       delta
+    //     );
+    //   } else if (percentage >= 0.5 && percentage < 1) {
+    //     imgRef.current.rotation.y = damp(
+    //       imgRef.current.rotation.y,
+    //       degree + (scrollRight ? rotateAdjustLarge : rotateAdjustSmall),
+    //       20,
+    //       delta
+    //     );
+    //   } else {
+    //     imgRef.current.rotation.y = damp(
+    //       imgRef.current.rotation.y,
+    //       scrollRight ? (Math.PI / 5) * speed : (-Math.PI / 5) * speed,
+    //       20,
+    //       delta
+    //     );
+    //   }
+    // } else {
+    //   imgRef.current.rotation.y = damp(imgRef.current.rotation.y, 0, 3, delta);
+    // }
 
-      // update rotation
-      const rotateAdjustLarge = (Math.PI / 8) * speed;
-      const rotateAdjustSmall = (Math.PI / 20) * speed;
-      // (Math.PI / 10) * speed;
-      if (speed >= 0.2) {
-        hover && setHover(false);
-        if (percentage > 0 && percentage < 0.5) {
-          imgRef.current.rotation.y = damp(
-            imgRef.current.rotation.y,
-            degree + (scrollRight ? -rotateAdjustSmall : -rotateAdjustLarge),
-            20,
-            delta
-          );
-        } else if (percentage >= 0.5 && percentage < 1) {
-          imgRef.current.rotation.y = damp(
-            imgRef.current.rotation.y,
-            degree + (scrollRight ? rotateAdjustLarge : rotateAdjustSmall),
-            20,
-            delta
-          );
-        } else {
-          imgRef.current.rotation.y = damp(
-            imgRef.current.rotation.y,
-            scrollRight ? (Math.PI / 5) * speed : (-Math.PI / 5) * speed,
-            20,
-            delta
-          );
-        }
-      } else {
-        imgRef.current.rotation.y = damp(
-          imgRef.current.rotation.y,
-          0,
-          3,
-          delta
-        );
-      }
+    // // update color
+    // if (hover) {
+    //   imgRef.current.material.grayscale = damp(
+    //     imgRef.current.material.grayscale,
+    //     hover ? 0 : 1,
+    //     10,
+    //     delta
+    //   );
+    // } else if (
+    //   speed > 0.2 &&
+    //   y > Math.min(0.75, Math.cos((speed * Math.PI) / 3))
+    // ) {
+    //   imgRef.current.material.grayscale = damp(
+    //     imgRef.current.material.grayscale,
+    //     Math.min(1, grayScaleFn(y, speed)),
+    //     3,
+    //     delta
+    //   );
+    // } else {
+    //   imgRef.current.material.grayscale = damp(
+    //     imgRef.current.material.grayscale,
+    //     1,
+    //     3,
+    //     delta
+    //   );
+    // }
 
-      // update color
-      if (hover) {
-        imgRef.current.material.grayscale = damp(
-          imgRef.current.material.grayscale,
-          hover ? 0 : 1,
-          10,
-          delta
-        );
-      } else if (
-        speed > 0.2 &&
-        y > Math.min(0.75, Math.cos((speed * Math.PI) / 3))
-      ) {
-        imgRef.current.material.grayscale = damp(
-          imgRef.current.material.grayscale,
-          Math.min(1, grayScaleFn(y, speed)),
-          3,
-          delta
-        );
-      } else {
-        imgRef.current.material.grayscale = damp(
-          imgRef.current.material.grayscale,
-          1,
-          3,
-          delta
-        );
-      }
-
-      imgRef.current.material.color.lerp(
-        color.set(
-          hover ||
-            (speed > 0.2 && y > Math.min(0.75, Math.cos((speed * Math.PI) / 3)))
-            ? "white"
-            : "#808080"
-        ),
-        hover
-          ? 0.3
-          : speed > 0.2 && y > Math.min(0.75, Math.cos((speed * Math.PI) / 3))
-          ? Math.min(1, Math.sin((Math.PI * y) / 2) * y * 0.085)
-          : 0.035
-      );
-    } else {
-      //if image is clicked
-      if (!scrollable && clicked === index) {
-        scroll.offset = (index + 0.5) / numImages;
-      }
-      const newImageWidth = clicked === index ? 1.388 * 5.25 : 3.9;
-      const newImageHeight = 0.792 * 5.25;
-      if (clicked !== index) {
-        imgRef.current.position.x = damp(
-          imgRef.current.position.x,
-          position[0] + 6.2 * (index - clicked),
-          7,
-          delta
-        );
-        imgRef.current.material.grayscale = damp(
-          imgRef.current.material.grayscale,
-          1,
-          3,
-          delta
-        );
-        imgRef.current.material.color.lerp(color.set("#808080"), 0.035);
-      } else {
-        imgRef.current.position.x = damp(
-          imgRef.current.position.x,
-          position[0],
-          7,
-          delta
-        );
-        imgRef.current.material.grayscale = damp(
-          imgRef.current.material.grayscale,
-          0,
-          3,
-          delta
-        );
-        imgRef.current.material.color.lerp(color.set("white"), 0.035);
-      }
-      imgRef.current.rotation.y = damp(imgRef.current.rotation.y, 0, 7, delta);
-      if (Math.abs(clicked - index) <= 1) {
-        imgRef.current.material.scale.x = imgRef.current.scale.x = damp(
-          imgRef.current.scale.x,
-          newImageWidth,
-          7,
-          delta
-        );
-        imgRef.current.material.scale.y = imgRef.current.scale.y = damp(
-          imgRef.current.scale.y,
-          newImageHeight,
-          7,
-          delta
-        );
-      }
-    }
+    // imgRef.current.material.color.lerp(
+    //   color.set(
+    //     hover ||
+    //       (speed > 0.2 && y > Math.min(0.75, Math.cos((speed * Math.PI) / 3)))
+    //       ? "white"
+    //       : "#808080"
+    //   ),
+    //   hover
+    //     ? 0.3
+    //     : speed > 0.2 && y > Math.min(0.75, Math.cos((speed * Math.PI) / 3))
+    //     ? Math.min(1, Math.sin((Math.PI * y) / 2) * y * 0.085)
+    //     : 0.035
+    // );
   });
   return (
-    <>
-      <Image
-        ref={imgRef}
-        url={url}
-        position={position}
-        scale={scale}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
-        onClick={onClickFn}
-        {...props}
-      />
-      {/* {clicked === index && (
-        <group position={[position[0], position[1], position[2] + 1]}>
-          <Text
-            ref={textRefUpper}
-            color={fontColor}
-            anchorX="center"
-            anchorY="middle"
-            fontSize={2.9}
-            font={fontFamily}
-            text="I  N  T        E  R"
-            position={[-1, 1.5, 0]}
-          />
-          <Text
-            color={fontColor}
-            anchorX="center"
-            anchorY="middle"
-            fontSize={2.9}
-            font={fontFamily}
-            text="S  TE   L  L  AR"
-            position={[0, -0.7, 0]}
-          />
-        </group>
-      )} */}
-    </>
+    // <Image
+    //   ref={imgRef}
+    //   url={url}
+    //   position={position}
+    //   scale={scale}
+    //   onPointerOver={() => setHover(true)}
+    //   onPointerOut={() => setHover(false)}
+    //   // onClick={onClickFn}
+    //   {...props}
+    // >
+    <mesh ref={imgRef} position={position}>
+      <planeGeometry args={[IMAGE_BLOCK_WIDTH, IMAGE_BLOCK_HEIGHT]} />
+      <customMaterial ref={materialRef} map={imgTexture} />
+    </mesh>
+    // </Image>
   );
 };
 
