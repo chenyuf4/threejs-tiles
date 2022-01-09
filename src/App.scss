@@ -8,63 +8,45 @@
   src: url("./assets/font/jw.woff2") format("woff2");
 }
 
-html,
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #151515;
   overflow: hidden;
-  font-family: "TNY", sans-serif;
-  transition: 0.5s;
-  // overscroll-behavior-x: none;
+  font-weight: 200;
+  color: #e0e0e0;
+  font-size: 0.6rem;
+  user-select: none;
 }
 
-#root,
-.app {
+#root {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 }
 
-.JW-font {
-  font-family: "JW", sans-serif;
-}
-
-//font size
-.font-xsss {
-  font-size: 4px;
-}
-
-.font-xss {
-  font-size: 6px;
-}
-
-.font-xs {
-  font-size: 8px;
-}
-
-.font-sm {
-  font-size: 10px;
-}
-
-// canvas layout
-.canvas-container {
-  z-index: 10;
-}
-
-// remove scroll bar of canvas, but still scrollable
-.remove-canvas-scroll-bar > div > div::-webkit-scrollbar {
-  width: 0 !important;
-}
-
-.remove-canvas-scroll-bar > div > div {
+.scrollArea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  //remove scroll bar and prevent overscroll behavior
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
   scrollbar-width: none;
   overscroll-behavior-x: none;
 }
 
-.font-animate {
-  transition: 0.5s;
-  color: #bac4b8;
+.scrollArea::-webkit-scrollbar {
+  //remove scroll bar
+  width: 0 !important;
 }

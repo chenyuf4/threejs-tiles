@@ -1,9 +1,11 @@
-import create from "zustand";
+import { createRef } from "react";
 
-export const useStore = create((set) => ({
-  // clicked image
-  clicked: -1, // no click = -1
-  setClicked: (index) => set(() => ({ clicked: index })),
-  scrollable: true,
-  setScrollable: (input) => set(() => ({ scrollable: input })),
-}));
+const state = {
+  sections: 6,
+  pages: 5,
+  zoom: 75,
+  ref: createRef(),
+  top: createRef(),
+};
+
+export default state;

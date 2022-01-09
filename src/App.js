@@ -1,54 +1,189 @@
-import React from "react";
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import "./App.scss";
-import Scene from "./components/Scene/Scene";
-import Home from "./components/Home/Home";
-import { PerspectiveCamera } from "@react-three/drei";
-import { useStore } from "store/store";
-import normalizeWheel from "normalize-wheel";
-const App = () => {
-  const { clicked, setClicked, setScrollable } = useStore();
-  const onWheelFn = (e) => {
-    const { pixelX, pixelY } = normalizeWheel(e);
-    if (Math.abs(pixelX) > 15 || Math.abs(pixelY) > 15) {
-      if (clicked !== -1) {
-        setClicked(-1);
-        setScrollable(true);
-        document.body.style.backgroundColor = "#151515";
-        document.querySelectorAll(".font-animate").forEach((item) => {
-          item.style.color = "#bac4b8";
-        });
-      }
+import * as THREE from "three";
+import React, { Suspense, useEffect, useRef, useState } from "react";
+import { Canvas, useFrame, useThree, createPortal } from "@react-three/fiber";
+import {
+  ScrollControls,
+  useScroll,
+  Text,
+  Loader,
+  Line,
+  Shadow,
+  useTexture,
+  meshBounds,
+  PerspectiveCamera,
+} from "@react-three/drei";
+import { useDrag } from "@use-gesture/react";
+import Plane from "./components/Plane";
+import Effects from "./components/Effects";
+import { Block, useBlock } from "./Block";
+import state from "./store/store";
+import {
+  imagesArr,
+  IMAGE_BLOCK_HEIGHT,
+  IMAGE_BLOCK_WIDTH,
+  IMAGE_GAP,
+} from "utils/utilFormat";
+
+function HeadsUpDisplay({ children }) {
+  const [scene] = useState(() => new THREE.Scene());
+  const { gl, camera } = useThree();
+  useFrame(
+    () => ((gl.autoClear = false), gl.clearDepth(), gl.render(scene, camera)),
+    2
+  );
+  return createPortal(children, scene);
+}
+
+function Marker() {
+  const ref = useRef();
+  const [active, setActive] = useState(false);
+  const [hovered, set] = useState(false);
+  const { sectionWidth } = useBlock();
+  useEffect(
+    () => void (document.body.style.cursor = hovered ? "grab" : "auto"),
+    [hovered]
+  );
+  useFrame(({ camera }) => {
+    // ref.current.rotation.z = THREE.MathUtils.lerp(
+    //   ref.current.rotation.z,
+    //   (state.top.current / state.zoom / sectionWidth / state.pages) *
+    //     -Math.PI *
+    //     2,
+    //   0.1
+    // );
+    // const s = THREE.MathUtils.lerp(
+    //   ref.current.scale.x,
+    //   active || hovered ? 2 : 0.75,
+    //   0.1
+    // );
+    // ref.current.scale.set(s, s, s);
+    camera.zoom = 40;
+    camera.updateProjectionMatrix();
+  });
+  const bind = useDrag(
+    ({ movement: [x], first, last }) => (
+      setActive(!last), (state.ref.scrollLeft = x * 2 * state.pages)
+    ),
+    {
+      from: () => [(state.ref.scrollLeft * 0.5) / state.pages],
     }
-  };
+  );
+  return (
+    <group ref={ref} position={[0, 0, 2]}>
+      {/* <Rect
+        {...bind()}
+        onPointerOver={(e) => (e.stopPropagation(), set(true))}
+        onPointerOut={() => set(false)}
+      /> */}
+    </group>
+  );
+}
+
+function Rect({ scale, ...props }) {
+  return (
+    <group scale={scale}>
+      <Line
+        points={[
+          -0.5, 0.5, 0, 0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0,
+        ]}
+        color="white"
+        linewidth={1}
+        position={[0, 0, 0]}
+      />
+      <mesh {...props} raycast={meshBounds}>
+        <planeGeometry />
+        <meshBasicMaterial transparent opacity={0.1} />
+      </mesh>
+    </group>
+  );
+}
+
+function Image({ img, index }) {
+  const ref = useRef();
+  const { contentMaxWidth: w, viewportWidth, offsetFactor } = useBlock();
+  useFrame(() => {
+    // const scrollOffset =
+    //   state.top.current / (viewportWidth * state.pages - viewportWidth) +
+    //   1 / state.pages / 2;
+    // const scale =
+    //   1 -
+    //   (offsetFactor - scrollOffset) * (offsetFactor > scrollOffset ? 1 : -1);
+    ref.current.scale.setScalar(1);
+  });
+  return (
+    <group ref={ref}>
+      <Plane
+        map={img}
+        args={[1, 1, 32, 32]}
+        shift={100}
+        aspect={1219 / 696}
+        scale={[IMAGE_BLOCK_WIDTH, IMAGE_BLOCK_HEIGHT, 1]}
+        frustumCulled={false}
+        url={imagesArr[index]}
+      />
+    </group>
+  );
+}
+
+function Content() {
+  const images = useTexture(imagesArr);
+  return images.map((img, index) => {
+    return (
+      <Block key={index} factor={1} offset={index}>
+        <Image key={index} index={index} img={img} />
+      </Block>
+    );
+  });
+}
+
+export default function App() {
+  const scrollArea = useRef();
+  const onScroll = (e) => (state.top.current = e.target.scrollLeft);
+  useEffect(
+    () => void onScroll({ target: (state.ref = scrollArea.current) }),
+    []
+  );
   return (
     <>
-      <div
-        className="w-100 h-100 position-relative canvas-container remove-canvas-scroll-bar"
-        onWheel={onWheelFn}
+      <Canvas
+        orthographic
+        dpr={[1, 1.5]}
+        mode="concurrent"
+        flat
+        linear
+        camera={{ position: [0, 0, 5], zoom: 100 }}
+        raycaster={{
+          computeOffsets: ({ offsetX, offsetY }) => ({
+            offsetX: offsetX - scrollArea.current.scrollLeft,
+            offsetY,
+          }),
+        }}
+        onCreated={(state) => state.events.connect(scrollArea.current)}
       >
-        <Suspense fallback={null}>
-          <Canvas
-            linear
-            dpr={[1, 1.5]}
-            flat={true}
-            linear={true}
-            gl={{
-              alpha: true,
-              antialias: true,
-              shadowMap: true,
-            }}
-          >
-            <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={50} />
-            <Scene />
-          </Canvas>
-        </Suspense>
+        {/* <PerspectiveCamera position={[0, 0, 900]} makeDefault zoom={40} /> */}
+        <Effects>
+          <Suspense fallback={null}>
+            <Content />
+            {/* <HeadsUpDisplay>
+            <Marker />
+          </HeadsUpDisplay> */}
+          </Suspense>
+        </Effects>
+      </Canvas>
+      <div
+        className="scrollArea remove-canvas-scroll-bar"
+        ref={scrollArea}
+        onScroll={onScroll}
+      >
+        <div
+          style={{
+            height: "100vh",
+            width: `${
+              (IMAGE_BLOCK_WIDTH + IMAGE_GAP) * imagesArr.length * 135
+            }px`,
+          }}
+        />
       </div>
-
-      <Home />
     </>
   );
-};
-
-export default App;
+}
