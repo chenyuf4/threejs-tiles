@@ -11,7 +11,7 @@ import img10 from "../assets/image/img10.webp";
 import img11 from "../assets/image/img11.webp";
 import img12 from "../assets/image/img12.webp";
 import img13 from "../assets/image/img13.webp";
-import img14 from "../assets/image/img14.webp";
+import img14 from "../assets/image/img14.jpg";
 import img15 from "../assets/image/img15.webp";
 import img16 from "../assets/image/img16.webp";
 import img17 from "../assets/image/img17.webp";

@@ -32,8 +32,12 @@ const App = () => {
           <Canvas
             linear
             dpr={[1, 1.5]}
+            flat={true}
+            linear={true}
             gl={{
+              alpha: true,
               antialias: true,
+              shadowMap: true,
             }}
           >
             <PerspectiveCamera makeDefault position={[0, 0, 9]} fov={50} />

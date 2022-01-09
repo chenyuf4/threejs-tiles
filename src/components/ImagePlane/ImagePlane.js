@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { IMAGE_BLOCK_HEIGHT, IMAGE_BLOCK_WIDTH } from "utils/utilFormat";
-import { useScroll, Image } from "@react-three/drei";
+import { useScroll, Image, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { imagesArr } from "utils/utilFormat";
@@ -8,6 +8,7 @@ import { useStore } from "store/store";
 import gsap from "gsap";
 import { Power2 } from "gsap";
 import useRefMounted from "hooks/useRefMounted";
+import fontFamily from "assets/font/Regular.otf";
 const { damp } = THREE.MathUtils;
 const { easeOut } = Power2;
 const ImagePlane = ({
@@ -27,6 +28,8 @@ const ImagePlane = ({
   const numImages = imagesArr.length;
   const scroll = useScroll();
   const mounted = useRefMounted();
+
+  const textRefUpper = useRef();
 
   const onClickFn = () => {
     if (mounted.current) {
@@ -254,16 +257,41 @@ const ImagePlane = ({
     }
   });
   return (
-    <Image
-      ref={imgRef}
-      url={url}
-      position={position}
-      scale={scale}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
-      onClick={onClickFn}
-      {...props}
-    />
+    <>
+      <Image
+        ref={imgRef}
+        url={url}
+        position={position}
+        scale={scale}
+        onPointerOver={() => setHover(true)}
+        onPointerOut={() => setHover(false)}
+        onClick={onClickFn}
+        {...props}
+      />
+      {/* {clicked === index && (
+        <group position={[position[0], position[1], position[2] + 1]}>
+          <Text
+            ref={textRefUpper}
+            color={fontColor}
+            anchorX="center"
+            anchorY="middle"
+            fontSize={2.9}
+            font={fontFamily}
+            text="I  N  T        E  R"
+            position={[-1, 1.5, 0]}
+          />
+          <Text
+            color={fontColor}
+            anchorX="center"
+            anchorY="middle"
+            fontSize={2.9}
+            font={fontFamily}
+            text="S  TE   L  L  AR"
+            position={[0, -0.7, 0]}
+          />
+        </group>
+      )} */}
+    </>
   );
 };
 
