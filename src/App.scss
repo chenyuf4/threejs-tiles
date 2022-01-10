@@ -18,6 +18,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #151515;
+  font-family: "TNY", sans-serif;
   overflow: hidden;
   font-weight: 200;
   color: #e0e0e0;
@@ -49,4 +50,26 @@ body {
 .scrollArea::-webkit-scrollbar {
   //remove scroll bar
   width: 0 !important;
+}
+
+//font
+.JW-font {
+  font-family: "JW", sans-serif;
+}
+
+//font size
+.font-xsss {
+  font-size: 4px;
+}
+
+.font-xss {
+  font-size: 6px;
+}
+
+.font-xs {
+  font-size: 8px;
+}
+
+.font-sm {
+  font-size: 10px;
 }

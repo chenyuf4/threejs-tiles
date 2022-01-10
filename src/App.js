@@ -12,6 +12,7 @@ import {
   meshBounds,
   PerspectiveCamera,
 } from "@react-three/drei";
+import Home from "components/Home/Home";
 import { useDrag } from "@use-gesture/react";
 import Plane from "./components/Plane";
 import Effects from "./components/Effects";
@@ -114,6 +115,7 @@ function Image({ img, index }) {
     <group ref={ref}>
       <Plane
         map={img}
+        index={index}
         args={[1, 1, 32, 32]}
         shift={100}
         aspect={1219 / 696}
@@ -145,13 +147,13 @@ export default function App() {
   );
   return (
     <>
+      <Home />
       <Canvas
-        orthographic
         dpr={[1, 1.5]}
         mode="concurrent"
         flat
         linear
-        camera={{ position: [0, 0, 5], zoom: 100 }}
+        // camera={{ position: [0, 0, 5] }}
         raycaster={{
           computeOffsets: ({ offsetX, offsetY }) => ({
             offsetX: offsetX - scrollArea.current.scrollLeft,
@@ -160,15 +162,15 @@ export default function App() {
         }}
         onCreated={(state) => state.events.connect(scrollArea.current)}
       >
-        {/* <PerspectiveCamera position={[0, 0, 900]} makeDefault zoom={40} /> */}
-        <Effects>
-          <Suspense fallback={null}>
-            <Content />
-            {/* <HeadsUpDisplay>
+        <PerspectiveCamera position={[0, 0, 9]} makeDefault />
+        {/* <Effects> */}
+        <Suspense fallback={null}>
+          <Content />
+          {/* <HeadsUpDisplay>
             <Marker />
           </HeadsUpDisplay> */}
-          </Suspense>
-        </Effects>
+        </Suspense>
+        {/* </Effects> */}
       </Canvas>
       <div
         className="scrollArea remove-canvas-scroll-bar"
