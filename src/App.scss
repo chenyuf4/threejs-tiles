@@ -43,13 +43,13 @@ body {
   //remove scroll bar and prevent overscroll behavior
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
-  scrollbar-width: none;
+  // scrollbar-width: none;
   overscroll-behavior-x: none;
 }
 
 .scrollArea::-webkit-scrollbar {
   //remove scroll bar
-  width: 0 !important;
+  // width: 0 !important;
 }
 
 //font

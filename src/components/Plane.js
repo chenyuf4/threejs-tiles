@@ -36,29 +36,28 @@ export default forwardRef(
     };
 
     const wholeWidth = (IMAGE_BLOCK_WIDTH * 9 + IMAGE_GAP * 8) * 135;
+    const offsetLength = index * IMAGE_BLOCK_WIDTH + IMAGE_GAP * index;
     useFrame((_, delta) => {
       const { pages, top } = state;
-
-      const offsetLength = index * IMAGE_BLOCK_WIDTH + IMAGE_GAP * index;
-      const x = (offsetLength - top.current) / (wholeWidth / 2);
+      console.log(top.current);
+      const x = ((offsetLength - top.current) * 3) / (wholeWidth / 2);
       // console.log(top.current);
       // material.current.scale = THREE.MathUtils.lerp(
       //   material.current.scale,
       //   offsetFactor - top.current / ((pages - 1) * viewportWidth),
       //   0.1
       // );
-      material.current.shift = index;
+      material.current.shift = 0;
       material.current.speed = THREE.MathUtils.lerp(
         material.current.speed || 0,
         Math.abs((top.current - last) / 30),
         0.1
       );
       let newZIndex = updateZValue(x, Math.abs((top.current - last) / 30));
-      console.log(newZIndex);
       material.current.zOffset = damp(
         material.current.zOffset || 0,
         newZIndex,
-        10,
+        4,
         delta
       );
 

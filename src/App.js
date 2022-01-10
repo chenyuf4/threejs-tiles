@@ -145,6 +145,7 @@ export default function App() {
     () => void onScroll({ target: (state.ref = scrollArea.current) }),
     []
   );
+
   return (
     <>
       <Home />
@@ -155,12 +156,16 @@ export default function App() {
         linear
         // camera={{ position: [0, 0, 5] }}
         raycaster={{
-          computeOffsets: ({ offsetX, offsetY }) => ({
-            offsetX: offsetX - scrollArea.current.scrollLeft,
-            offsetY,
-          }),
+          computeOffsets: ({ offsetX, offsetY }) => {
+            return {
+              offsetX: offsetX - scrollArea.current.scrollLeft,
+              offsetY,
+            };
+          },
         }}
-        onCreated={(state) => state.events.connect(scrollArea.current)}
+        onCreated={(state) => {
+          state.events.connect(scrollArea.current);
+        }}
       >
         <PerspectiveCamera position={[0, 0, 9]} makeDefault />
         {/* <Effects> */}
@@ -181,7 +186,9 @@ export default function App() {
           style={{
             height: "100vh",
             width: `${
-              (IMAGE_BLOCK_WIDTH + IMAGE_GAP) * imagesArr.length * 135
+              (imagesArr.length * IMAGE_BLOCK_WIDTH +
+                (imagesArr.length - 1) * IMAGE_GAP) *
+              137
             }px`,
           }}
         />
