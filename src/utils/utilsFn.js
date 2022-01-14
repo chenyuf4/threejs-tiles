@@ -24,3 +24,18 @@ export const bellFnDeriative = (x, a, b, c) => {
     (b * 4 ** b * c * (a - 2 * x) * ((a - x) * x) ** (b - 1)) / a ** (2 * b)
   );
 };
+
+export const normalCurveDeriativeFn = (x, speed, variance, c) => {
+  return (
+    (c * speed * (-x * Math.exp(-(x ** 2) / (2 * variance ** 2)))) /
+    (variance * Math.sqrt(2 * Math.PI))
+  );
+};
+
+export const normalCurveFn = (x, speed, variance, c) => {
+  if (x > 1 || x <= 0) return 0;
+  return (
+    (c * speed * (Math.exp(-(x ** 2) / (2 * variance ** 2)) - 0.1)) /
+    (variance * Math.sqrt(2 * Math.PI))
+  );
+};

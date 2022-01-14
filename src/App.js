@@ -14,7 +14,15 @@ const App = () => {
   // top > 0
   //bottom < 0
   const scrollRef = useRef(null);
-  const handleOnWheel = (e) => (scrollRef.current = e);
+  const handleOnWheel = (e) => {
+    scrollRef.current = normalizeWheel(e);
+    // const { pixelX, pixelY } = scrollRef.current;
+    // const relativeSpeed = Math.max(Math.abs(pixelX), Math.abs(pixelY));
+    // console.log(relativeSpeed);
+    // if (relativeSpeed < 10) {
+    //   setTimeout(() => (scrollRef.current = null), 200);
+    // }
+  };
   return (
     <>
       <div

@@ -28,7 +28,7 @@ export const DISTANCE_TO_PLANE = 5;
 export const IMAGE_GAP = 0.018 * DISTANCE_TO_PLANE;
 export const IMAGE_BLOCK_HEIGHT = 0.3 * DISTANCE_TO_PLANE;
 export const IMAGE_BLOCK_WIDTH = 0.078 * DISTANCE_TO_PLANE;
-export const DAMP_FACTOR = 0.05;
+export const DAMP_FACTOR = 0.07;
 export const LERP_FACTOR = 0.05;
 export const imagesArr = [
   img1,
